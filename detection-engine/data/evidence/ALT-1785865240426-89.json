@@ -1,0 +1,48 @@
+{
+  "alertId": "ALT-1785865240426-89",
+  "timestamp": "2026-08-04T17:40:40.426Z",
+  "device": "streetlight",
+  "rule": "COMMAND_INJECTION_ATTEMPT",
+  "description": "Shell metacharacters found in checksum",
+  "triggerEvent": {
+    "id": 2,
+    "ts": "2026-08-04T17:40:38.968Z",
+    "device": "streetlight-14",
+    "type": "FIRMWARE_UPDATE_ATTEMPT",
+    "detail": {
+      "version": "2.3.1",
+      "checksum": "abc123\" && id && echo \"done",
+      "ip": "::1"
+    }
+  },
+  "contextWindow": [
+    {
+      "id": 1,
+      "ts": "2026-08-04T17:40:38.933Z",
+      "device": "streetlight-14",
+      "type": "FIRMWARE_UPDATE_ATTEMPT",
+      "detail": {
+        "version": "2.3.1",
+        "checksum": "a1b2c3d4",
+        "ip": "::1"
+      }
+    },
+    {
+      "id": 2,
+      "ts": "2026-08-04T17:40:38.968Z",
+      "device": "streetlight-14",
+      "type": "FIRMWARE_UPDATE_ATTEMPT",
+      "detail": {
+        "version": "2.3.1",
+        "checksum": "abc123\" && id && echo \"done",
+        "ip": "::1"
+      }
+    }
+  ],
+  "chainOfCustody": {
+    "capturedBy": "detection-engine",
+    "capturedAt": "2026-08-04T17:40:40.426Z",
+    "storageLocation": "P:\\CCF_project\\Smart_city_cybercrime\\detection-engine\\data\\evidence\\ALT-1785865240426-89.json",
+    "sha256Hash": "b496b441f81c9d94916a034cbf6df3b8add7eb5c5fcb64a158bf4a448c8652ea"
+  }
+}

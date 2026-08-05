@@ -1,0 +1,50 @@
+services:
+  traffic-camera:
+    build: ./devices/traffic-camera
+    ports:
+      - "4001:4001"
+    networks:
+      - scms-net
+
+  smart-meter:
+    build: ./devices/smart-meter
+    ports:
+      - "4002:4002"
+    networks:
+      - scms-net
+
+  streetlight:
+    build: ./devices/streetlight
+    ports:
+      - "4003:4003"
+    networks:
+      - scms-net
+
+  detection-engine:
+    build: ./detection-engine
+    ports:
+      - "4010:4010"
+    volumes:
+      - ./detection-engine/data:/app/data
+    depends_on:
+      - traffic-camera
+      - smart-meter
+      - streetlight
+    networks:
+      - scms-net
+
+  dashboard:
+    build: ./dashboard
+    ports:
+      - "8085:8080"
+    depends_on:
+      - traffic-camera
+      - smart-meter
+      - streetlight
+      - detection-engine
+    networks:
+      - scms-net
+
+networks:
+  scms-net:
+    driver: bridge

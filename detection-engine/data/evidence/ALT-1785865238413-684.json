@@ -1,0 +1,85 @@
+{
+  "alertId": "ALT-1785865238413-684",
+  "timestamp": "2026-08-04T17:40:38.413Z",
+  "device": "smart-meter",
+  "rule": "SUSPICIOUS_METER_READING",
+  "description": "Out-of-bounds reading accepted by device",
+  "triggerEvent": {
+    "id": 6,
+    "ts": "2026-08-04T17:40:37.856Z",
+    "device": "smart-meter-07",
+    "type": "SUSPICIOUS_READING_ACCEPTED",
+    "detail": {
+      "kwh": 9999,
+      "ip": "::1"
+    }
+  },
+  "contextWindow": [
+    {
+      "id": 1,
+      "ts": "2026-08-04T17:40:36.299Z",
+      "device": "smart-meter-07",
+      "type": "READING_ACCEPTED",
+      "detail": {
+        "kwh": 0.1,
+        "ip": "::1"
+      }
+    },
+    {
+      "id": 2,
+      "ts": "2026-08-04T17:40:36.615Z",
+      "device": "smart-meter-07",
+      "type": "READING_ACCEPTED",
+      "detail": {
+        "kwh": 0.1,
+        "ip": "::1"
+      }
+    },
+    {
+      "id": 3,
+      "ts": "2026-08-04T17:40:36.924Z",
+      "device": "smart-meter-07",
+      "type": "READING_ACCEPTED",
+      "detail": {
+        "kwh": 0.1,
+        "ip": "::1"
+      }
+    },
+    {
+      "id": 4,
+      "ts": "2026-08-04T17:40:37.235Z",
+      "device": "smart-meter-07",
+      "type": "READING_ACCEPTED",
+      "detail": {
+        "kwh": 0.1,
+        "ip": "::1"
+      }
+    },
+    {
+      "id": 5,
+      "ts": "2026-08-04T17:40:37.548Z",
+      "device": "smart-meter-07",
+      "type": "READING_ACCEPTED",
+      "detail": {
+        "kwh": 0.1,
+        "ip": "::1"
+      }
+    },
+    {
+      "id": 6,
+      "ts": "2026-08-04T17:40:37.856Z",
+      "device": "smart-meter-07",
+      "type": "SUSPICIOUS_READING_ACCEPTED",
+      "detail": {
+        "kwh": 9999,
+        "ip": "::1"
+      }
+    }
+  ],
+  "chainOfCustody": {
+    "capturedBy": "detection-engine",
+    "capturedAt": "2026-08-04T17:40:38.413Z",
+    "storageLocation": "P:\\CCF_project\\Smart_city_cybercrime\\detection-engine\\data\\evidence\\ALT-1785865238413-684.json",
+    "sha256Hash": "ea519f9106291d825b7104001f2073d26eb4b35eec791f2db1ad63362bfb3ab6"
+  }
+}

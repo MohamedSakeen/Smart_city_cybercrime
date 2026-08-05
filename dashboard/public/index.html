@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Smart City Cybercrime Monitoring — Dashboard</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>Smart City Cybercrime Monitoring System</h1>
+  </header>
+
+  <section id="devices" class="device-grid"></section>
+
+  <section class="alerts-panel">
+    <h2>Alerts <span id="alert-count" class="badge-count"></span></h2>
+    <div id="alerts" class="alert-list"></div>
+  </section>
+
+  <section class="events-panel">
+    <h2>Raw event log (all devices)</h2>
+    <div id="events" class="event-list"></div>
+  </section>
+
+  <div id="modal-backdrop" class="modal-backdrop hidden">
+    <div class="modal">
+      <button id="modal-close" class="modal-close">close</button>
+      <pre id="modal-body"></pre>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
