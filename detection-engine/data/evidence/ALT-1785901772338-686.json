@@ -1,0 +1,85 @@
+{
+  "alertId": "ALT-1785901772338-686",
+  "timestamp": "2026-08-05T03:49:32.338Z",
+  "device": "smart-meter",
+  "rule": "SUSPICIOUS_METER_READING",
+  "description": "Out-of-bounds reading accepted by device",
+  "triggerEvent": {
+    "id": 6,
+    "ts": "2026-08-05T03:49:30.354Z",
+    "device": "smart-meter-07",
+    "type": "SUSPICIOUS_READING_ACCEPTED",
+    "detail": {
+      "kwh": 9999,
+      "ip": "::ffff:172.22.0.1"
+    }
+  },
+  "contextWindow": [
+    {
+      "id": 1,
+      "ts": "2026-08-05T03:49:28.793Z",
+      "device": "smart-meter-07",
+      "type": "READING_ACCEPTED",
+      "detail": {
+        "kwh": 0.1,
+        "ip": "::ffff:172.22.0.1"
+      }
+    },
+    {
+      "id": 2,
+      "ts": "2026-08-05T03:49:29.110Z",
+      "device": "smart-meter-07",
+      "type": "READING_ACCEPTED",
+      "detail": {
+        "kwh": 0.1,
+        "ip": "::ffff:172.22.0.1"
+      }
+    },
+    {
+      "id": 3,
+      "ts": "2026-08-05T03:49:29.419Z",
+      "device": "smart-meter-07",
+      "type": "READING_ACCEPTED",
+      "detail": {
+        "kwh": 0.1,
+        "ip": "::ffff:172.22.0.1"
+      }
+    },
+    {
+      "id": 4,
+      "ts": "2026-08-05T03:49:29.731Z",
+      "device": "smart-meter-07",
+      "type": "READING_ACCEPTED",
+      "detail": {
+        "kwh": 0.1,
+        "ip": "::ffff:172.22.0.1"
+      }
+    },
+    {
+      "id": 5,
+      "ts": "2026-08-05T03:49:30.042Z",
+      "device": "smart-meter-07",
+      "type": "READING_ACCEPTED",
+      "detail": {
+        "kwh": 0.1,
+        "ip": "::ffff:172.22.0.1"
+      }
+    },
+    {
+      "id": 6,
+      "ts": "2026-08-05T03:49:30.354Z",
+      "device": "smart-meter-07",
+      "type": "SUSPICIOUS_READING_ACCEPTED",
+      "detail": {
+        "kwh": 9999,
+        "ip": "::ffff:172.22.0.1"
+      }
+    }
+  ],
+  "chainOfCustody": {
+    "capturedBy": "detection-engine",
+    "capturedAt": "2026-08-05T03:49:32.338Z",
+    "storageLocation": "/app/data/evidence/ALT-1785901772338-686.json",
+    "sha256Hash": "fd03e96c60ecbd610d09c83782187fd1a324b298c9d077ad06ff112ae50d2b0d"
+  }
+}

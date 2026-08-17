@@ -1,0 +1,71 @@
+{
+  "alertId": "ALT-1786945436877-907",
+  "timestamp": "2026-08-17T05:43:56.877Z",
+  "device": "streetlight",
+  "rule": "COMMAND_INJECTION_ATTEMPT",
+  "description": "Shell metacharacters detected in firmware update checksum payload: 'abc123\" && id && echo \"simulated_rce'",
+  "triggerEvent": {
+    "id": 4,
+    "ts": "2026-08-17T05:43:55.797Z",
+    "device": "streetlight-14",
+    "type": "FIRMWARE_UPDATE_ATTEMPT",
+    "detail": {
+      "version": "2.4.0",
+      "checksum": "abc123\" && id && echo \"simulated_rce",
+      "ip": "::ffff:172.22.0.5"
+    }
+  },
+  "contextWindow": [
+    {
+      "id": 1,
+      "ts": "2026-08-17T05:42:48.761Z",
+      "device": "streetlight-14",
+      "type": "FIRMWARE_UPDATE_ATTEMPT",
+      "detail": {
+        "version": "2.4.0",
+        "checksum": "abc123\" && id && echo \"simulated_rce",
+        "ip": "::ffff:172.22.0.5"
+      }
+    },
+    {
+      "id": 2,
+      "ts": "2026-08-17T05:43:24.384Z",
+      "device": "streetlight-14",
+      "type": "FIRMWARE_UPDATE_ATTEMPT",
+      "detail": {
+        "version": "2.3.1",
+        "checksum": "a1b2c3d4",
+        "ip": "::ffff:172.22.0.1"
+      }
+    },
+    {
+      "id": 3,
+      "ts": "2026-08-17T05:43:24.424Z",
+      "device": "streetlight-14",
+      "type": "FIRMWARE_UPDATE_ATTEMPT",
+      "detail": {
+        "version": "2.3.1",
+        "checksum": "abc123\" && id && echo \"done",
+        "ip": "::ffff:172.22.0.1"
+      }
+    },
+    {
+      "id": 4,
+      "ts": "2026-08-17T05:43:55.797Z",
+      "device": "streetlight-14",
+      "type": "FIRMWARE_UPDATE_ATTEMPT",
+      "detail": {
+        "version": "2.4.0",
+        "checksum": "abc123\" && id && echo \"simulated_rce",
+        "ip": "::ffff:172.22.0.5"
+      }
+    }
+  ],
+  "chainOfCustody": {
+    "capturedBy": "detection-engine (SOC Automated Capture)",
+    "capturedAt": "2026-08-17T05:43:56.877Z",
+    "storageLocation": "/app/data/evidence/ALT-1786945436877-907.json",
+    "sha256Hash": "4bdeb6d6aea1cf6ada68ef5693984d65e54b1dbc3647632243312ea81b48e9db",
+    "verificationStatus": "VERIFIED"
+  }
+}

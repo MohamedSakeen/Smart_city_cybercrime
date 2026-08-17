@@ -1,0 +1,38 @@
+{
+  "alertId": "ALT-1786979984194-187",
+  "timestamp": "2026-08-17T15:19:44.194Z",
+  "device": "streetlight",
+  "rule": "COMMAND_INJECTION_ATTEMPT",
+  "description": "Shell metacharacters detected in firmware update checksum payload: 'abc123\" && id && echo \"simulated_rce'",
+  "triggerEvent": {
+    "id": 1,
+    "ts": "2026-08-17T15:19:42.541Z",
+    "device": "streetlight-14",
+    "type": "FIRMWARE_UPDATE_ATTEMPT",
+    "detail": {
+      "version": "2.4.0",
+      "checksum": "abc123\" && id && echo \"simulated_rce",
+      "ip": "::1"
+    }
+  },
+  "contextWindow": [
+    {
+      "id": 1,
+      "ts": "2026-08-17T15:19:42.541Z",
+      "device": "streetlight-14",
+      "type": "FIRMWARE_UPDATE_ATTEMPT",
+      "detail": {
+        "version": "2.4.0",
+        "checksum": "abc123\" && id && echo \"simulated_rce",
+        "ip": "::1"
+      }
+    }
+  ],
+  "chainOfCustody": {
+    "capturedBy": "detection-engine (SOC Automated Capture)",
+    "capturedAt": "2026-08-17T15:19:44.194Z",
+    "storageLocation": "P:\\Smart_city_cybercrime\\detection-engine\\data\\evidence\\ALT-1786979984194-187.json",
+    "sha256Hash": "92e4332c540d238e62bb5d56b3be3fd391978c22494d38c683aa095fb3f2dd17",
+    "verificationStatus": "VERIFIED"
+  }
+}

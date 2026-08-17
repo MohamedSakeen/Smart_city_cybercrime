@@ -1,0 +1,86 @@
+{
+  "alertId": "ALT-1786979992225-6",
+  "timestamp": "2026-08-17T15:19:52.225Z",
+  "device": "smart-meter",
+  "rule": "METER_BASELINE_DEVIATION",
+  "description": "Reading of 9999 kWh deviates >2.5x from rolling baseline mean (0.10 kWh)",
+  "triggerEvent": {
+    "id": 6,
+    "ts": "2026-08-17T15:19:51.973Z",
+    "device": "smart-meter-07",
+    "type": "SUSPICIOUS_READING_ACCEPTED",
+    "detail": {
+      "kwh": 9999,
+      "ip": "::1"
+    }
+  },
+  "contextWindow": [
+    {
+      "id": 1,
+      "ts": "2026-08-17T15:19:50.410Z",
+      "device": "smart-meter-07",
+      "type": "READING_ACCEPTED",
+      "detail": {
+        "kwh": 0.1,
+        "ip": "::1"
+      }
+    },
+    {
+      "id": 2,
+      "ts": "2026-08-17T15:19:50.724Z",
+      "device": "smart-meter-07",
+      "type": "READING_ACCEPTED",
+      "detail": {
+        "kwh": 0.1,
+        "ip": "::1"
+      }
+    },
+    {
+      "id": 3,
+      "ts": "2026-08-17T15:19:51.035Z",
+      "device": "smart-meter-07",
+      "type": "READING_ACCEPTED",
+      "detail": {
+        "kwh": 0.1,
+        "ip": "::1"
+      }
+    },
+    {
+      "id": 4,
+      "ts": "2026-08-17T15:19:51.348Z",
+      "device": "smart-meter-07",
+      "type": "READING_ACCEPTED",
+      "detail": {
+        "kwh": 0.1,
+        "ip": "::1"
+      }
+    },
+    {
+      "id": 5,
+      "ts": "2026-08-17T15:19:51.661Z",
+      "device": "smart-meter-07",
+      "type": "READING_ACCEPTED",
+      "detail": {
+        "kwh": 0.1,
+        "ip": "::1"
+      }
+    },
+    {
+      "id": 6,
+      "ts": "2026-08-17T15:19:51.973Z",
+      "device": "smart-meter-07",
+      "type": "SUSPICIOUS_READING_ACCEPTED",
+      "detail": {
+        "kwh": 9999,
+        "ip": "::1"
+      }
+    }
+  ],
+  "chainOfCustody": {
+    "capturedBy": "detection-engine (SOC Automated Capture)",
+    "capturedAt": "2026-08-17T15:19:52.225Z",
+    "storageLocation": "P:\\Smart_city_cybercrime\\detection-engine\\data\\evidence\\ALT-1786979992225-6.json",
+    "sha256Hash": "a69d2a427d542bbdea08dcdb4157059da01b5e0604a5e4644890e6f8dee9f705",
+    "verificationStatus": "VERIFIED"
+  }
+}

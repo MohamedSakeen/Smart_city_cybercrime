@@ -1,0 +1,131 @@
+{
+  "alertId": "ALT-1786982808892-67",
+  "timestamp": "2026-08-17T16:06:48.892Z",
+  "device": "streetlight",
+  "rule": "COMMAND_INJECTION_ATTEMPT",
+  "description": "Shell metacharacters detected in firmware update checksum payload: 'abc123\" && id && echo \"simulated_rce'",
+  "triggerEvent": {
+    "id": 12,
+    "ts": "2026-08-17T16:06:47.631Z",
+    "device": "streetlight-14",
+    "type": "FIRMWARE_UPDATE_ATTEMPT",
+    "detail": {
+      "version": "2.4.0",
+      "checksum": "abc123\" && id && echo \"simulated_rce",
+      "ip": "::1"
+    }
+  },
+  "contextWindow": [
+    {
+      "id": 1,
+      "ts": "2026-08-17T15:19:42.541Z",
+      "device": "streetlight-14",
+      "type": "FIRMWARE_UPDATE_ATTEMPT",
+      "detail": {
+        "version": "2.4.0",
+        "checksum": "abc123\" && id && echo \"simulated_rce",
+        "ip": "::1"
+      }
+    },
+    {
+      "id": 2,
+      "ts": "2026-08-17T15:19:42.542Z",
+      "device": "streetlight-14",
+      "type": "FIRMWARE_UPDATE_ERROR",
+      "detail": {
+        "error": "Command failed: echo \"verifying firmware 2.4.0 checksum: abc123\" && id && echo \"simulated_rce\"\n'id' is not recognized as an internal or external command,\r\noperable program or batch file.\r\n"
+      }
+    },
+    {
+      "id": 3,
+      "ts": "2026-08-17T15:19:54.136Z",
+      "device": "streetlight-14",
+      "type": "FIRMWARE_UPDATE_ATTEMPT",
+      "detail": {
+        "version": "2.3.1",
+        "checksum": "a1b2c3d4",
+        "ip": "::1"
+      }
+    },
+    {
+      "id": 4,
+      "ts": "2026-08-17T15:19:54.164Z",
+      "device": "streetlight-14",
+      "type": "FIRMWARE_UPDATE_ATTEMPT",
+      "detail": {
+        "version": "2.3.1",
+        "checksum": "abc123\" && id && echo \"done",
+        "ip": "::1"
+      }
+    },
+    {
+      "id": 5,
+      "ts": "2026-08-17T15:19:54.164Z",
+      "device": "streetlight-14",
+      "type": "FIRMWARE_UPDATE_ERROR",
+      "detail": {
+        "error": "Command failed: echo \"verifying firmware 2.3.1 checksum: abc123\" && id && echo \"done\"\n'id' is not recognized as an internal or external command,\r\noperable program or batch file.\r\n"
+      }
+    },
+    {
+      "id": 6,
+      "ts": "2026-08-17T15:20:04.891Z",
+      "device": "streetlight-14",
+      "type": "FIRMWARE_UPDATE_ATTEMPT",
+      "detail": {
+        "version": "2.3.1",
+        "checksum": "a1b2c3d4",
+        "ip": "::1"
+      }
+    },
+    {
+      "id": 7,
+      "ts": "2026-08-17T15:20:04.941Z",
+      "device": "streetlight-14",
+      "type": "FIRMWARE_UPDATE_ATTEMPT",
+      "detail": {
+        "version": "2.3.1",
+        "checksum": "abc123\" && whoami && echo \"done",
+        "ip": "::1"
+      }
+    },
+    {
+      "id": 8,
+      "ts": "2026-08-17T15:20:08.708Z",
+      "device": "streetlight-14",
+      "type": "FIRMWARE_UPDATE_ATTEMPT",
+      "detail": {
+        "version": "2.4.0",
+        "checksum": "abc123\" && id && echo \"simulated_rce",
+        "ip": "::1"
+      }
+    },
+    {
+      "id": 9,
+      "ts": "2026-08-17T15:20:08.708Z",
+      "device": "streetlight-14",
+      "type": "FIRMWARE_UPDATE_ERROR",
+      "detail": {
+        "error": "Command failed: echo \"verifying firmware 2.4.0 checksum: abc123\" && id && echo \"simulated_rce\"\n'id' is not recognized as an internal or external command,\r\noperable program or batch file.\r\n"
+      }
+    },
+    {
+      "id": 10,
+      "ts": "2026-08-17T15:48:13.437Z",
+      "device": "streetlight-14",
+      "type": "FIRMWARE_UPDATE_ATTEMPT",
+      "detail": {
+        "version": "2.4.0",
+        "checksum": "abc123\" && id && echo \"simulated_rce",
+        "ip": "::1"
+      }
+    }
+  ],
+  "chainOfCustody": {
+    "capturedBy": "detection-engine (SOC Automated Capture)",
+    "capturedAt": "2026-08-17T16:06:48.892Z",
+    "storageLocation": "P:\\Smart_city_cybercrime\\detection-engine\\data\\evidence\\ALT-1786982808892-67.json",
+    "sha256Hash": "be29d08e7d92ec715b632d6b90e3588db7f59fea155cc168b61d2a7ceab516e8",
+    "verificationStatus": "VERIFIED"
+  }
+}

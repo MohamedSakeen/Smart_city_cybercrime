@@ -1,0 +1,85 @@
+{
+  "alertId": "ALT-1785901772342-330",
+  "timestamp": "2026-08-05T03:49:32.342Z",
+  "device": "smart-meter",
+  "rule": "METER_BASELINE_DEVIATION",
+  "description": "Reading 9999 exceeds 2.5x mean (0.10)",
+  "triggerEvent": {
+    "id": 6,
+    "ts": "2026-08-05T03:49:30.354Z",
+    "device": "smart-meter-07",
+    "type": "SUSPICIOUS_READING_ACCEPTED",
+    "detail": {
+      "kwh": 9999,
+      "ip": "::ffff:172.22.0.1"
+    }
+  },
+  "contextWindow": [
+    {
+      "id": 1,
+      "ts": "2026-08-05T03:49:28.793Z",
+      "device": "smart-meter-07",
+      "type": "READING_ACCEPTED",
+      "detail": {
+        "kwh": 0.1,
+        "ip": "::ffff:172.22.0.1"
+      }
+    },
+    {
+      "id": 2,
+      "ts": "2026-08-05T03:49:29.110Z",
+      "device": "smart-meter-07",
+      "type": "READING_ACCEPTED",
+      "detail": {
+        "kwh": 0.1,
+        "ip": "::ffff:172.22.0.1"
+      }
+    },
+    {
+      "id": 3,
+      "ts": "2026-08-05T03:49:29.419Z",
+      "device": "smart-meter-07",
+      "type": "READING_ACCEPTED",
+      "detail": {
+        "kwh": 0.1,
+        "ip": "::ffff:172.22.0.1"
+      }
+    },
+    {
+      "id": 4,
+      "ts": "2026-08-05T03:49:29.731Z",
+      "device": "smart-meter-07",
+      "type": "READING_ACCEPTED",
+      "detail": {
+        "kwh": 0.1,
+        "ip": "::ffff:172.22.0.1"
+      }
+    },
+    {
+      "id": 5,
+      "ts": "2026-08-05T03:49:30.042Z",
+      "device": "smart-meter-07",
+      "type": "READING_ACCEPTED",
+      "detail": {
+        "kwh": 0.1,
+        "ip": "::ffff:172.22.0.1"
+      }
+    },
+    {
+      "id": 6,
+      "ts": "2026-08-05T03:49:30.354Z",
+      "device": "smart-meter-07",
+      "type": "SUSPICIOUS_READING_ACCEPTED",
+      "detail": {
+        "kwh": 9999,
+        "ip": "::ffff:172.22.0.1"
+      }
+    }
+  ],
+  "chainOfCustody": {
+    "capturedBy": "detection-engine",
+    "capturedAt": "2026-08-05T03:49:32.342Z",
+    "storageLocation": "/app/data/evidence/ALT-1785901772342-330.json",
+    "sha256Hash": "46592bb048b2312b98d39c364dc0d1aae74169402059a3581dbb696ff0ee7d45"
+  }
+}

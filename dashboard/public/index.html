@@ -1,31 +1,480 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Smart City Cybercrime Monitoring — Dashboard</title>
-<link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart City Security Operations Center (SOC)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header>
-    <h1>Smart City Cybercrime Monitoring System</h1>
-  </header>
+  <div class="app-layout">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-brand">
+        <div class="brand-logo">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <span class="brand-title">EXO SMART CITY</span>
+          <span class="brand-subtitle">SOC & CYBER RANGE</span>
+        </div>
+      </div>
 
-  <section id="devices" class="device-grid"></section>
+      <nav class="sidebar-nav">
+        <button class="nav-item active" data-tab="overview">
+          <span>Overview</span>
+        </button>
+        <button class="nav-item" data-tab="incidents">
+          <span>Incidents</span>
+          <span class="badge" id="nav-incident-badge">0</span>
+        </button>
+        <button class="nav-item" data-tab="alerts">
+          <span>Alerts</span>
+        </button>
+        <button class="nav-item" data-tab="events">
+          <span>Live Events</span>
+        </button>
+        <button class="nav-item" data-tab="assets">
+          <span>Assets & Topology</span>
+        </button>
+        <button class="nav-item" data-tab="simulator">
+          <span>Attack Simulator</span>
+        </button>
+        <button class="nav-item" data-tab="evidence">
+          <span>Forensic Evidence</span>
+        </button>
+        <button class="nav-item" data-tab="reports">
+          <span>PDF Reports</span>
+        </button>
+        <button class="nav-item" data-tab="health">
+          <span>System Health</span>
+        </button>
+      </nav>
 
-  <section class="alerts-panel">
-    <h2>Alerts <span id="alert-count" class="badge-count"></span></h2>
-    <div id="alerts" class="alert-list"></div>
-  </section>
+      <div class="sidebar-footer">
+        <div class="sim-badge">
+          <span class="sim-dot"></span>
+          <span>SIMULATION MODE</span>
+        </div>
+      </div>
+    </aside>
 
-  <section class="events-panel">
-    <h2>Raw event log (all devices)</h2>
-    <div id="events" class="event-list"></div>
-  </section>
+    <!-- Main Content Area -->
+    <main class="main-wrapper">
+      <!-- Top Navigation Header -->
+      <header class="top-header">
+        <div class="top-header-left">
+          <button class="mobile-toggle" id="mobile-toggle">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+          </button>
+          <h1 class="header-title" id="page-title">SOC Security Overview</h1>
+          <span class="env-pill">SIMULATION / LAB</span>
+        </div>
 
-  <div id="modal-backdrop" class="modal-backdrop hidden">
-    <div class="modal">
-      <button id="modal-close" class="modal-close">close</button>
-      <pre id="modal-body"></pre>
+        <div class="top-header-right">
+          <div class="search-bar">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" id="global-search" placeholder="Search incidents, assets, alerts, rules...">
+          </div>
+
+          <div class="status-indicator">
+            <span class="status-dot-pulse" id="sync-dot"></span>
+            <span id="sync-status">System Healthy</span>
+            <span class="sync-time" id="sync-time">2s ago</span>
+          </div>
+
+          <button class="btn-icon" id="pause-sync-btn" title="Toggle Auto Refresh">Pause Sync</button>
+        </div>
+      </header>
+
+      <!-- Simulation Safety Banner -->
+      <div class="simulation-banner">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <span><strong>SIMULATION ENVIRONMENT:</strong> All IoT devices, events, attacks, and evidence bundles are isolated academic testbed simulations.</span>
+      </div>
+
+      <!-- TAB 1: OVERVIEW -->
+      <section class="tab-content active" id="tab-overview">
+        <!-- KPI Cards Grid -->
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <div class="kpi-header">
+              <span class="kpi-title">Total Assets</span>
+              <svg class="kpi-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="8" rx="2"/><rect x="2" y="14" width="20" height="8" rx="2"/></svg>
+            </div>
+            <div class="kpi-value" id="kpi-assets">3</div>
+            <div class="kpi-subtext" id="kpi-assets-sub">3 Online | 0 Offline</div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-header">
+              <span class="kpi-title">Open Incidents</span>
+              <svg class="kpi-icon warning" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            </div>
+            <div class="kpi-value warning" id="kpi-open-incidents">0</div>
+            <div class="kpi-subtext" id="kpi-high-risk-sub">0 High Severity</div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-header">
+              <span class="kpi-title">Total Events</span>
+              <svg class="kpi-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+            </div>
+            <div class="kpi-value" id="kpi-events">0</div>
+            <div class="kpi-subtext">Ingested across 3 devices</div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-header">
+              <span class="kpi-title">Mean Time To Detect (MTTD)</span>
+              <svg class="kpi-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            </div>
+            <div class="kpi-value info" id="kpi-mttd">0.0s</div>
+            <div class="kpi-subtext">Real-time polling engine</div>
+          </div>
+        </div>
+
+        <!-- Security Posture & Charts Row -->
+        <div class="overview-grid">
+          <!-- Security Posture Card -->
+          <div class="panel card-posture">
+            <div class="panel-header">
+              <h3>System Security Posture</h3>
+              <span class="badge-tag" id="posture-status-tag">SECURE</span>
+            </div>
+            <div class="posture-body">
+              <div class="risk-gauge-container">
+                <div class="risk-score-display">
+                  <span class="score-number" id="risk-score">15</span>
+                  <span class="score-max">/ 100 Risk</span>
+                </div>
+                <div class="risk-bar-wrapper">
+                  <div class="risk-bar-fill" id="risk-bar" style="width: 15%;"></div>
+                </div>
+              </div>
+
+              <div class="posture-metrics">
+                <div class="posture-item">
+                  <span class="label">Detection Rules Active</span>
+                  <span class="val">5 Rules</span>
+                </div>
+                <div class="posture-item">
+                  <span class="label">Forensic Proof</span>
+                  <span class="val">SHA-256 Hash Guard</span>
+                </div>
+                <div class="posture-item">
+                  <span class="label">Device Vulnerabilities</span>
+                  <span class="val danger">3 Baked-in Vectors</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Simulated Network Topology View -->
+          <div class="panel card-topology">
+            <div class="panel-header">
+              <h3>Simulated Smart City Topology</h3>
+              <span class="sub-text">Live Node Connections</span>
+            </div>
+            <div class="topology-container" id="topology-view">
+              <!-- SVG Topology Diagram rendered dynamically -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Live Security Activity Stream -->
+        <div class="panel">
+          <div class="panel-header">
+            <h3>Live Security Activity Feed</h3>
+            <div class="panel-actions">
+              <select id="feed-severity-filter" class="filter-select">
+                <option value="ALL">All Severities</option>
+                <option value="High">High Severity</option>
+                <option value="Medium">Medium Severity</option>
+              </select>
+            </div>
+          </div>
+          <div class="activity-feed" id="live-activity-feed">
+            <div class="loading-placeholder">Ingesting security events...</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 2: INCIDENTS -->
+      <section class="tab-content" id="tab-incidents">
+        <div class="panel">
+          <div class="panel-header">
+            <div class="filter-group">
+              <h3>Incident Management Workspace</h3>
+              <div class="filter-pills">
+                <button class="pill active" data-inc-filter="ALL">All</button>
+                <button class="pill" data-inc-filter="NEW">New</button>
+                <button class="pill" data-inc-filter="INVESTIGATING">Investigating</button>
+                <button class="pill" data-inc-filter="CONTAINED">Contained</button>
+                <button class="pill" data-inc-filter="RESOLVED">Resolved</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Severity</th>
+                  <th>Incident ID</th>
+                  <th>Target Asset</th>
+                  <th>Detection Rule</th>
+                  <th>Status</th>
+                  <th>MITRE ATT&CK</th>
+                  <th>Created At</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="incidents-table-body">
+                <tr><td colspan="8" class="text-muted text-center">No security incidents detected yet.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 3: ALERTS -->
+      <section class="tab-content" id="tab-alerts">
+        <div class="panel">
+          <div class="panel-header">
+            <h3>Raw Detection Engine Alerts</h3>
+            <span class="sub-text" id="alerts-total-count">0 Alerts Captured</span>
+          </div>
+
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Severity</th>
+                  <th>Alert ID</th>
+                  <th>Device</th>
+                  <th>Rule Triggered</th>
+                  <th>Message</th>
+                  <th>Latency</th>
+                  <th>Evidence File</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="alerts-table-body">
+                <tr><td colspan="8" class="text-muted text-center">No alerts logged yet. Run an attack scenario to trigger detection rules.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 4: LIVE EVENTS -->
+      <section class="tab-content" id="tab-events">
+        <div class="panel">
+          <div class="panel-header">
+            <h3>Raw Ingested Security Event Stream</h3>
+            <div class="panel-actions">
+              <input type="text" id="events-search" class="filter-input" placeholder="Filter event type or payload...">
+            </div>
+          </div>
+
+          <div class="event-stream-container" id="raw-events-list">
+            <div class="loading-placeholder">Polling events from traffic-camera, smart-meter, and streetlight...</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 5: ASSETS -->
+      <section class="tab-content" id="tab-assets">
+        <div class="assets-grid" id="assets-cards-container">
+          <!-- Rendered dynamically -->
+        </div>
+      </section>
+
+      <!-- TAB 6: ATTACK SIMULATOR -->
+      <section class="tab-content" id="tab-simulator">
+        <div class="panel">
+          <div class="panel-header">
+            <div>
+              <h3>Cyber Range Attack Simulation Console</h3>
+              <p class="sub-text">Launch controlled exploit scenarios against isolated mock smart city IoT devices.</p>
+            </div>
+          </div>
+
+          <div class="scenarios-grid">
+            <!-- Scenario 1 -->
+            <div class="scenario-card">
+              <div class="scenario-header">
+                <span class="scenario-target">Traffic Camera</span>
+                <span class="badge high">High Risk</span>
+              </div>
+              <h4>1. Account Brute-Force Attack</h4>
+              <p class="scenario-desc">Simulates automated dictionary attack attempting default credentials on <code>/api/login</code>.</p>
+              <div class="scenario-tags">
+                <span class="tag">MITRE T1110</span>
+                <span class="tag">Default Creds</span>
+              </div>
+              <button class="btn btn-danger" onclick="runSimulation('camera-brute-force')">
+                Launch Attack
+              </button>
+            </div>
+
+            <!-- Scenario 2 -->
+            <div class="scenario-card">
+              <div class="scenario-header">
+                <span class="scenario-target">Traffic Camera</span>
+                <span class="badge high">High Risk</span>
+              </div>
+              <h4>2. JWT Token Secret Forgery</h4>
+              <p class="scenario-desc">Forges authorization tokens using weak signing key <code>cam123</code> to hijack video feed.</p>
+              <div class="scenario-tags">
+                <span class="tag">MITRE T1550</span>
+                <span class="tag">Weak Secret</span>
+              </div>
+              <button class="btn btn-danger" onclick="runSimulation('camera-jwt-forge')">
+                Launch Attack
+              </button>
+            </div>
+
+            <!-- Scenario 3 -->
+            <div class="scenario-card">
+              <div class="scenario-header">
+                <span class="scenario-target">Smart Meter</span>
+                <span class="badge medium">Medium Risk</span>
+              </div>
+              <h4>3. Meter Sensor Data Spoofing</h4>
+              <p class="scenario-desc">Injects out-of-bounds 9999 kWh reading into unauthenticated endpoint <code>/api/reading</code>.</p>
+              <div class="scenario-tags">
+                <span class="tag">MITRE T1565</span>
+                <span class="tag">No Auth Injection</span>
+              </div>
+              <button class="btn btn-warning" onclick="runSimulation('meter-spoof')">
+                Launch Attack
+              </button>
+            </div>
+
+            <!-- Scenario 4 -->
+            <div class="scenario-card">
+              <div class="scenario-header">
+                <span class="scenario-target">Streetlight Controller</span>
+                <span class="badge high">High Risk</span>
+              </div>
+              <h4>4. Firmware OS Command Injection</h4>
+              <p class="scenario-desc">Injects shell metacharacters into firmware checksum parameter on <code>/api/firmware/update</code> (RCE).</p>
+              <div class="scenario-tags">
+                <span class="tag">MITRE T1059</span>
+                <span class="tag">Command Injection</span>
+              </div>
+              <button class="btn btn-danger" onclick="runSimulation('streetlight-cmdi')">
+                Launch Attack
+              </button>
+            </div>
+          </div>
+
+          <!-- Live Execution Output Console -->
+          <div class="sim-console-panel">
+            <div class="sim-console-header">
+              <h4>Simulation Execution Log</h4>
+              <button class="btn-text" id="clear-sim-log">Clear Log</button>
+            </div>
+            <div class="sim-console-body" id="sim-console-output">
+              <div class="log-line system">> Cyber Range Simulator Ready. Select a scenario above to launch an automated attack drill.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 7: EVIDENCE & FORENSICS -->
+      <section class="tab-content" id="tab-evidence">
+        <div class="panel">
+          <div class="panel-header">
+            <h3>Forensic Evidence Storage & SHA-256 Verification</h3>
+            <span class="sub-text">Chain of Custody & Cryptographic Proof</span>
+          </div>
+
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Evidence ID</th>
+                  <th>Incident ID</th>
+                  <th>Target Asset</th>
+                  <th>Captured At</th>
+                  <th>SHA-256 Hash</th>
+                  <th>Chain of Custody</th>
+                  <th>Verification</th>
+                </tr>
+              </thead>
+              <tbody id="evidence-table-body">
+                <tr><td colspan="7" class="text-muted text-center">No evidence bundles stored yet.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 8: REPORTS -->
+      <section class="tab-content" id="tab-reports">
+        <div class="panel">
+          <div class="panel-header">
+            <h3>Generated Cybercrime PDF Reports</h3>
+            <span class="sub-text">Formal Incident Deliverables</span>
+          </div>
+
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Report File</th>
+                  <th>Incident ID</th>
+                  <th>Device</th>
+                  <th>Rule Triggered</th>
+                  <th>Format</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="reports-table-body">
+                <tr><td colspan="6" class="text-muted text-center">No reports generated yet.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 9: SYSTEM HEALTH -->
+      <section class="tab-content" id="tab-health">
+        <div class="panel">
+          <div class="panel-header">
+            <h3>Microservices & Infrastructure System Health</h3>
+          </div>
+
+          <div class="health-grid" id="health-services-grid">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- DEEP INVESTIGATION & EVIDENCE MODAL WORKSPACE -->
+  <div class="modal-backdrop hidden" id="modal-backdrop">
+    <div class="modal-container">
+      <div class="modal-header">
+        <div>
+          <h2 id="modal-title">Incident Investigation Workspace</h2>
+          <span class="badge" id="modal-severity-badge">HIGH</span>
+        </div>
+        <button class="modal-close" id="modal-close-btn">&times;</button>
+      </div>
+
+      <div class="modal-body" id="modal-body-content">
+        <!-- Rendered dynamically for selected incident -->
+      </div>
     </div>
   </div>
 

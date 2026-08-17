@@ -1,0 +1,86 @@
+{
+  "alertId": "ALT-1786979992224-453",
+  "timestamp": "2026-08-17T15:19:52.224Z",
+  "device": "smart-meter",
+  "rule": "SUSPICIOUS_METER_READING",
+  "description": "Out-of-bounds energy reading (9999 kWh) accepted without auth",
+  "triggerEvent": {
+    "id": 6,
+    "ts": "2026-08-17T15:19:51.973Z",
+    "device": "smart-meter-07",
+    "type": "SUSPICIOUS_READING_ACCEPTED",
+    "detail": {
+      "kwh": 9999,
+      "ip": "::1"
+    }
+  },
+  "contextWindow": [
+    {
+      "id": 1,
+      "ts": "2026-08-17T15:19:50.410Z",
+      "device": "smart-meter-07",
+      "type": "READING_ACCEPTED",
+      "detail": {
+        "kwh": 0.1,
+        "ip": "::1"
+      }
+    },
+    {
+      "id": 2,
+      "ts": "2026-08-17T15:19:50.724Z",
+      "device": "smart-meter-07",
+      "type": "READING_ACCEPTED",
+      "detail": {
+        "kwh": 0.1,
+        "ip": "::1"
+      }
+    },
+    {
+      "id": 3,
+      "ts": "2026-08-17T15:19:51.035Z",
+      "device": "smart-meter-07",
+      "type": "READING_ACCEPTED",
+      "detail": {
+        "kwh": 0.1,
+        "ip": "::1"
+      }
+    },
+    {
+      "id": 4,
+      "ts": "2026-08-17T15:19:51.348Z",
+      "device": "smart-meter-07",
+      "type": "READING_ACCEPTED",
+      "detail": {
+        "kwh": 0.1,
+        "ip": "::1"
+      }
+    },
+    {
+      "id": 5,
+      "ts": "2026-08-17T15:19:51.661Z",
+      "device": "smart-meter-07",
+      "type": "READING_ACCEPTED",
+      "detail": {
+        "kwh": 0.1,
+        "ip": "::1"
+      }
+    },
+    {
+      "id": 6,
+      "ts": "2026-08-17T15:19:51.973Z",
+      "device": "smart-meter-07",
+      "type": "SUSPICIOUS_READING_ACCEPTED",
+      "detail": {
+        "kwh": 9999,
+        "ip": "::1"
+      }
+    }
+  ],
+  "chainOfCustody": {
+    "capturedBy": "detection-engine (SOC Automated Capture)",
+    "capturedAt": "2026-08-17T15:19:52.224Z",
+    "storageLocation": "P:\\Smart_city_cybercrime\\detection-engine\\data\\evidence\\ALT-1786979992224-453.json",
+    "sha256Hash": "d7d18b084fbabc220df46041f9c5edfa7360bb9a71e009231d386c4c7a02246e",
+    "verificationStatus": "VERIFIED"
+  }
+}

@@ -26,6 +26,10 @@ services:
       - "4010:4010"
     volumes:
       - ./detection-engine/data:/app/data
+    environment:
+      - CAMERA_URL=http://traffic-camera:4001
+      - METER_URL=http://smart-meter:4002
+      - STREETLIGHT_URL=http://streetlight:4003
     depends_on:
       - traffic-camera
       - smart-meter

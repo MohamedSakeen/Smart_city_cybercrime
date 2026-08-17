@@ -1,0 +1,69 @@
+{
+  "alertId": "ALT-1786979994230-773",
+  "timestamp": "2026-08-17T15:19:54.230Z",
+  "device": "streetlight",
+  "rule": "COMMAND_INJECTION_ATTEMPT",
+  "description": "Shell metacharacters detected in firmware update checksum payload: 'abc123\" && id && echo \"done'",
+  "triggerEvent": {
+    "id": 4,
+    "ts": "2026-08-17T15:19:54.164Z",
+    "device": "streetlight-14",
+    "type": "FIRMWARE_UPDATE_ATTEMPT",
+    "detail": {
+      "version": "2.3.1",
+      "checksum": "abc123\" && id && echo \"done",
+      "ip": "::1"
+    }
+  },
+  "contextWindow": [
+    {
+      "id": 1,
+      "ts": "2026-08-17T15:19:42.541Z",
+      "device": "streetlight-14",
+      "type": "FIRMWARE_UPDATE_ATTEMPT",
+      "detail": {
+        "version": "2.4.0",
+        "checksum": "abc123\" && id && echo \"simulated_rce",
+        "ip": "::1"
+      }
+    },
+    {
+      "id": 2,
+      "ts": "2026-08-17T15:19:42.542Z",
+      "device": "streetlight-14",
+      "type": "FIRMWARE_UPDATE_ERROR",
+      "detail": {
+        "error": "Command failed: echo \"verifying firmware 2.4.0 checksum: abc123\" && id && echo \"simulated_rce\"\n'id' is not recognized as an internal or external command,\r\noperable program or batch file.\r\n"
+      }
+    },
+    {
+      "id": 3,
+      "ts": "2026-08-17T15:19:54.136Z",
+      "device": "streetlight-14",
+      "type": "FIRMWARE_UPDATE_ATTEMPT",
+      "detail": {
+        "version": "2.3.1",
+        "checksum": "a1b2c3d4",
+        "ip": "::1"
+      }
+    },
+    {
+      "id": 4,
+      "ts": "2026-08-17T15:19:54.164Z",
+      "device": "streetlight-14",
+      "type": "FIRMWARE_UPDATE_ATTEMPT",
+      "detail": {
+        "version": "2.3.1",
+        "checksum": "abc123\" && id && echo \"done",
+        "ip": "::1"
+      }
+    }
+  ],
+  "chainOfCustody": {
+    "capturedBy": "detection-engine (SOC Automated Capture)",
+    "capturedAt": "2026-08-17T15:19:54.230Z",
+    "storageLocation": "P:\\Smart_city_cybercrime\\detection-engine\\data\\evidence\\ALT-1786979994230-773.json",
+    "sha256Hash": "db85d4f6461045b5a6aee1e94eb48f07f41b7adc63fb65c235ee34332f8f022b",
+    "verificationStatus": "VERIFIED"
+  }
+}

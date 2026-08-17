@@ -1,0 +1,86 @@
+{
+  "alertId": "ALT-1786945394862-874",
+  "timestamp": "2026-08-17T05:43:14.862Z",
+  "device": "smart-meter",
+  "rule": "METER_BASELINE_DEVIATION",
+  "description": "Reading of 9999 kWh deviates >2.5x from rolling baseline mean (0.10 kWh)",
+  "triggerEvent": {
+    "id": 6,
+    "ts": "2026-08-17T05:43:13.858Z",
+    "device": "smart-meter-07",
+    "type": "SUSPICIOUS_READING_ACCEPTED",
+    "detail": {
+      "kwh": 9999,
+      "ip": "::ffff:172.22.0.1"
+    }
+  },
+  "contextWindow": [
+    {
+      "id": 1,
+      "ts": "2026-08-17T05:43:12.227Z",
+      "device": "smart-meter-07",
+      "type": "READING_ACCEPTED",
+      "detail": {
+        "kwh": 0.1,
+        "ip": "::ffff:172.22.0.1"
+      }
+    },
+    {
+      "id": 2,
+      "ts": "2026-08-17T05:43:12.563Z",
+      "device": "smart-meter-07",
+      "type": "READING_ACCEPTED",
+      "detail": {
+        "kwh": 0.1,
+        "ip": "::ffff:172.22.0.1"
+      }
+    },
+    {
+      "id": 3,
+      "ts": "2026-08-17T05:43:12.890Z",
+      "device": "smart-meter-07",
+      "type": "READING_ACCEPTED",
+      "detail": {
+        "kwh": 0.1,
+        "ip": "::ffff:172.22.0.1"
+      }
+    },
+    {
+      "id": 4,
+      "ts": "2026-08-17T05:43:13.202Z",
+      "device": "smart-meter-07",
+      "type": "READING_ACCEPTED",
+      "detail": {
+        "kwh": 0.1,
+        "ip": "::ffff:172.22.0.1"
+      }
+    },
+    {
+      "id": 5,
+      "ts": "2026-08-17T05:43:13.530Z",
+      "device": "smart-meter-07",
+      "type": "READING_ACCEPTED",
+      "detail": {
+        "kwh": 0.1,
+        "ip": "::ffff:172.22.0.1"
+      }
+    },
+    {
+      "id": 6,
+      "ts": "2026-08-17T05:43:13.858Z",
+      "device": "smart-meter-07",
+      "type": "SUSPICIOUS_READING_ACCEPTED",
+      "detail": {
+        "kwh": 9999,
+        "ip": "::ffff:172.22.0.1"
+      }
+    }
+  ],
+  "chainOfCustody": {
+    "capturedBy": "detection-engine (SOC Automated Capture)",
+    "capturedAt": "2026-08-17T05:43:14.862Z",
+    "storageLocation": "/app/data/evidence/ALT-1786945394862-874.json",
+    "sha256Hash": "09c8a921514ee7347dcbe2f5f30e252d6a189010c307cfffcc2480c251263c6f",
+    "verificationStatus": "VERIFIED"
+  }
+}

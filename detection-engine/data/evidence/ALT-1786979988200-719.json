@@ -1,0 +1,56 @@
+{
+  "alertId": "ALT-1786979988200-719",
+  "timestamp": "2026-08-17T15:19:48.200Z",
+  "device": "traffic-camera",
+  "rule": "UNAUTHORIZED_FEED_ACCESS",
+  "description": "Protected video feed accessed by non-operator subject: 'attacker'",
+  "triggerEvent": {
+    "id": 3,
+    "ts": "2026-08-17T15:19:48.034Z",
+    "device": "traffic-camera-01",
+    "type": "FEED_ACCESSED",
+    "detail": {
+      "by": "attacker",
+      "ip": "::1"
+    }
+  },
+  "contextWindow": [
+    {
+      "id": 1,
+      "ts": "2026-08-17T15:19:48.018Z",
+      "device": "traffic-camera-01",
+      "type": "LOGIN_SUCCESS",
+      "detail": {
+        "username": "admin",
+        "ip": "::1"
+      }
+    },
+    {
+      "id": 2,
+      "ts": "2026-08-17T15:19:48.027Z",
+      "device": "traffic-camera-01",
+      "type": "FEED_ACCESSED",
+      "detail": {
+        "by": "admin",
+        "ip": "::1"
+      }
+    },
+    {
+      "id": 3,
+      "ts": "2026-08-17T15:19:48.034Z",
+      "device": "traffic-camera-01",
+      "type": "FEED_ACCESSED",
+      "detail": {
+        "by": "attacker",
+        "ip": "::1"
+      }
+    }
+  ],
+  "chainOfCustody": {
+    "capturedBy": "detection-engine (SOC Automated Capture)",
+    "capturedAt": "2026-08-17T15:19:48.200Z",
+    "storageLocation": "P:\\Smart_city_cybercrime\\detection-engine\\data\\evidence\\ALT-1786979988200-719.json",
+    "sha256Hash": "42a938e98d6a90508e5b2f7b8fc72c940245341b45d4dc9da5280fe372ea0d1c",
+    "verificationStatus": "VERIFIED"
+  }
+}

@@ -1,0 +1,56 @@
+{
+  "alertId": "ALT-1786945382840-92",
+  "timestamp": "2026-08-17T05:43:02.840Z",
+  "device": "traffic-camera",
+  "rule": "UNAUTHORIZED_FEED_ACCESS",
+  "description": "Protected video feed accessed by non-operator subject: 'attacker'",
+  "triggerEvent": {
+    "id": 3,
+    "ts": "2026-08-17T05:43:01.362Z",
+    "device": "traffic-camera-01",
+    "type": "FEED_ACCESSED",
+    "detail": {
+      "by": "attacker",
+      "ip": "::ffff:172.22.0.1"
+    }
+  },
+  "contextWindow": [
+    {
+      "id": 1,
+      "ts": "2026-08-17T05:43:01.294Z",
+      "device": "traffic-camera-01",
+      "type": "LOGIN_SUCCESS",
+      "detail": {
+        "username": "admin",
+        "ip": "::ffff:172.22.0.1"
+      }
+    },
+    {
+      "id": 2,
+      "ts": "2026-08-17T05:43:01.336Z",
+      "device": "traffic-camera-01",
+      "type": "FEED_ACCESSED",
+      "detail": {
+        "by": "admin",
+        "ip": "::ffff:172.22.0.1"
+      }
+    },
+    {
+      "id": 3,
+      "ts": "2026-08-17T05:43:01.362Z",
+      "device": "traffic-camera-01",
+      "type": "FEED_ACCESSED",
+      "detail": {
+        "by": "attacker",
+        "ip": "::ffff:172.22.0.1"
+      }
+    }
+  ],
+  "chainOfCustody": {
+    "capturedBy": "detection-engine (SOC Automated Capture)",
+    "capturedAt": "2026-08-17T05:43:02.840Z",
+    "storageLocation": "/app/data/evidence/ALT-1786945382840-92.json",
+    "sha256Hash": "50c17bf5f903756224475e8995e5b867bd4e8e6c3741708d88fd84075ff01c91",
+    "verificationStatus": "VERIFIED"
+  }
+}

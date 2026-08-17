@@ -1,0 +1,48 @@
+{
+  "alertId": "ALT-1785901774341-882",
+  "timestamp": "2026-08-05T03:49:34.341Z",
+  "device": "streetlight",
+  "rule": "COMMAND_INJECTION_ATTEMPT",
+  "description": "Shell metacharacters found in checksum",
+  "triggerEvent": {
+    "id": 2,
+    "ts": "2026-08-05T03:49:33.954Z",
+    "device": "streetlight-14",
+    "type": "FIRMWARE_UPDATE_ATTEMPT",
+    "detail": {
+      "version": "2.3.1",
+      "checksum": "abc123\" && id && echo \"done",
+      "ip": "::ffff:172.22.0.1"
+    }
+  },
+  "contextWindow": [
+    {
+      "id": 1,
+      "ts": "2026-08-05T03:49:33.937Z",
+      "device": "streetlight-14",
+      "type": "FIRMWARE_UPDATE_ATTEMPT",
+      "detail": {
+        "version": "2.3.1",
+        "checksum": "a1b2c3d4",
+        "ip": "::ffff:172.22.0.1"
+      }
+    },
+    {
+      "id": 2,
+      "ts": "2026-08-05T03:49:33.954Z",
+      "device": "streetlight-14",
+      "type": "FIRMWARE_UPDATE_ATTEMPT",
+      "detail": {
+        "version": "2.3.1",
+        "checksum": "abc123\" && id && echo \"done",
+        "ip": "::ffff:172.22.0.1"
+      }
+    }
+  ],
+  "chainOfCustody": {
+    "capturedBy": "detection-engine",
+    "capturedAt": "2026-08-05T03:49:34.341Z",
+    "storageLocation": "/app/data/evidence/ALT-1785901774341-882.json",
+    "sha256Hash": "3e275d94d25284a1aa0108c56af147e8e63f5dff2c00a94dc15c5f62e16119d7"
+  }
+}

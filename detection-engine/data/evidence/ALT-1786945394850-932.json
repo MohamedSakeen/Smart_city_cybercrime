@@ -1,0 +1,86 @@
+{
+  "alertId": "ALT-1786945394850-932",
+  "timestamp": "2026-08-17T05:43:14.850Z",
+  "device": "smart-meter",
+  "rule": "SUSPICIOUS_METER_READING",
+  "description": "Out-of-bounds energy reading (9999 kWh) accepted without auth",
+  "triggerEvent": {
+    "id": 6,
+    "ts": "2026-08-17T05:43:13.858Z",
+    "device": "smart-meter-07",
+    "type": "SUSPICIOUS_READING_ACCEPTED",
+    "detail": {
+      "kwh": 9999,
+      "ip": "::ffff:172.22.0.1"
+    }
+  },
+  "contextWindow": [
+    {
+      "id": 1,
+      "ts": "2026-08-17T05:43:12.227Z",
+      "device": "smart-meter-07",
+      "type": "READING_ACCEPTED",
+      "detail": {
+        "kwh": 0.1,
+        "ip": "::ffff:172.22.0.1"
+      }
+    },
+    {
+      "id": 2,
+      "ts": "2026-08-17T05:43:12.563Z",
+      "device": "smart-meter-07",
+      "type": "READING_ACCEPTED",
+      "detail": {
+        "kwh": 0.1,
+        "ip": "::ffff:172.22.0.1"
+      }
+    },
+    {
+      "id": 3,
+      "ts": "2026-08-17T05:43:12.890Z",
+      "device": "smart-meter-07",
+      "type": "READING_ACCEPTED",
+      "detail": {
+        "kwh": 0.1,
+        "ip": "::ffff:172.22.0.1"
+      }
+    },
+    {
+      "id": 4,
+      "ts": "2026-08-17T05:43:13.202Z",
+      "device": "smart-meter-07",
+      "type": "READING_ACCEPTED",
+      "detail": {
+        "kwh": 0.1,
+        "ip": "::ffff:172.22.0.1"
+      }
+    },
+    {
+      "id": 5,
+      "ts": "2026-08-17T05:43:13.530Z",
+      "device": "smart-meter-07",
+      "type": "READING_ACCEPTED",
+      "detail": {
+        "kwh": 0.1,
+        "ip": "::ffff:172.22.0.1"
+      }
+    },
+    {
+      "id": 6,
+      "ts": "2026-08-17T05:43:13.858Z",
+      "device": "smart-meter-07",
+      "type": "SUSPICIOUS_READING_ACCEPTED",
+      "detail": {
+        "kwh": 9999,
+        "ip": "::ffff:172.22.0.1"
+      }
+    }
+  ],
+  "chainOfCustody": {
+    "capturedBy": "detection-engine (SOC Automated Capture)",
+    "capturedAt": "2026-08-17T05:43:14.850Z",
+    "storageLocation": "/app/data/evidence/ALT-1786945394850-932.json",
+    "sha256Hash": "1629a82dbc8061238df6f205a821dc5a4b9c66ab5ab67f4ba36334178fee45b0",
+    "verificationStatus": "VERIFIED"
+  }
+}
