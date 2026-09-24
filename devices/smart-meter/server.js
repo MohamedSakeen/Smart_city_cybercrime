@@ -30,11 +30,36 @@ function logEvent(type, detail) {
   console.log(`[${DEVICE_ID}]`, type, detail);
 }
 
+let isIsolated = false;
+
 app.get("/status", (req, res) => {
-  res.json({ device: DEVICE_ID, kind: "smart-meter", status: "online", vulnerable: true });
+  res.json({ device: DEVICE_ID, kind: "smart-meter", status: isIsolated ? "isolated" : "online", isolated: isIsolated, vulnerable: true });
 });
 
 app.get("/events", (req, res) => res.json(events));
+
+// SOAR Containment Controls
+app.post("/api/contain", (req, res) => {
+  isIsolated = true;
+  logEvent("SOAR_ASSET_ISOLATED", { action: "ISOLATE", by: "SOC SOAR Engine", ip: req.ip });
+  res.json({ ok: true, device: DEVICE_ID, isolated: true, message: "Asset network interface isolated by SOAR response action." });
+});
+
+app.post("/api/uncontain", (req, res) => {
+  isIsolated = false;
+  logEvent("SOAR_ASSET_RESTORED", { action: "UNCONTAIN", by: "SOC SOAR Engine", ip: req.ip });
+  res.json({ ok: true, device: DEVICE_ID, isolated: false, message: "Asset network interface restored to online state." });
+});
+
+// Middleware for enforcing isolation
+app.use((req, res, next) => {
+  if (isIsolated && req.path.startsWith("/api/")) {
+    logEvent("BLOCKED_BY_SOAR_FIREWALL", { path: req.path, ip: req.ip });
+    return res.status(503).json({ error: "Asset is isolated by SOC SOAR active response firewall.", isolated: true });
+  }
+  next();
+});
+
 app.get("/api/readings", (req, res) => res.json(readings.slice(0, 20)));
 
 // Vulnerable: no auth, no plausibility check, no rate limit

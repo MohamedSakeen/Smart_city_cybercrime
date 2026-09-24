@@ -390,30 +390,39 @@ function renderRawEventsStream() {
 
 function renderAssetsGrid() {
   const container = document.getElementById('assets-cards-container');
-  container.innerHTML = assetsData.map(a => `
-    <div class="asset-card">
+  container.innerHTML = assetsData.map(a => {
+    const isIsolated = a.status === 'isolated';
+    return `
+    <div class="asset-card" style="${isIsolated ? 'border: 2px solid var(--accent-red); background: #FFF5F5;' : ''}">
       <div class="panel-header">
         <div>
-          <h3>${a.name}</h3>
+          <h3>${a.name} ${isIsolated ? '<span class="badge high">ISOLATED BY SOAR</span>' : ''}</h3>
           <span class="sub-text">${a.location}</span>
         </div>
         <span class="badge ${a.riskLevel === 'High' ? 'high' : 'medium'}">${a.riskLevel} Risk</span>
       </div>
 
       <div class="posture-metrics" style="margin-bottom: 12px;">
-        <div class="posture-item"><span class="label">Status</span><span class="val">${a.status.toUpperCase()} ●</span></div>
+        <div class="posture-item"><span class="label">Status</span><span class="val" style="${isIsolated ? 'color:var(--accent-red); font-weight:700;' : ''}">${a.status.toUpperCase()} ●</span></div>
         <div class="posture-item"><span class="label">Criticality</span><span class="val">${a.criticality}</span></div>
         <div class="posture-item"><span class="label">Active Incidents</span><span class="val danger">${a.openIncidentsCount}</span></div>
       </div>
 
-      <div style="font-size:12px;">
+      <div style="font-size:12px; margin-bottom: 12px;">
         <strong>Documented Vulnerabilities:</strong>
         <ul style="margin-left: 18px; margin-top: 6px; color: var(--color-red-orange);">
           ${a.vulnerabilities.map(v => `<li>${v}</li>`).join('')}
         </ul>
       </div>
+
+      <div style="display:flex; gap:8px; margin-top:10px;">
+        ${isIsolated
+          ? `<button class="btn btn-warning" style="width:100%; font-weight:600;" onclick="uncontainAsset('${a.id}')">Restore Asset Network (Uncontain)</button>`
+          : `<button class="btn btn-danger" style="width:100%; font-weight:600;" onclick="containAsset('${a.id}')">Isolate Network Interface (SOAR)</button>`
+        }
+      </div>
     </div>
-  `).join('');
+  `}).join('');
 }
 
 function renderEvidenceTable() {
@@ -432,7 +441,11 @@ function renderEvidenceTable() {
       <td><code>SHA-256 HASH GUARD</code></td>
       <td>SOC Automated Collection</td>
       <td>
-        <button class="btn btn-secondary" onclick="verifyEvidence('${a.id}')">Verify SHA-256</button>
+        <div style="display:flex; gap:4px; flex-wrap:wrap;">
+          <button class="btn btn-secondary" onclick="verifyEvidence('${a.id}')">Verify Hash</button>
+          <a href="${DETECTION_ENGINE}/alerts/${a.id}/export/stix" target="_blank"><button class="btn btn-secondary">STIX 2.1</button></a>
+          <a href="${DETECTION_ENGINE}/alerts/${a.id}/export/cef" target="_blank"><button class="btn btn-secondary">CEF</button></a>
+        </div>
       </td>
     </tr>
   `).join('');
@@ -474,17 +487,17 @@ function renderSystemHealth(h) {
     </div>
     <div class="kpi-card">
       <div class="kpi-title">Traffic Camera (:4001)</div>
-      <div class="kpi-value" style="font-size:22px;">${h.devices?.['traffic-camera']?.status?.toUpperCase() || 'OFFLINE'}</div>
+      <div class="kpi-value" style="font-size:22px; ${h.devices?.['traffic-camera']?.status === 'isolated' ? 'color:var(--accent-red);' : ''}">${h.devices?.['traffic-camera']?.status?.toUpperCase() || 'OFFLINE'}</div>
       <div class="kpi-subtext">Latency: ${h.devices?.['traffic-camera']?.latencyMs || 0}ms</div>
     </div>
     <div class="kpi-card">
       <div class="kpi-title">Smart Meter (:4002)</div>
-      <div class="kpi-value" style="font-size:22px;">${h.devices?.['smart-meter']?.status?.toUpperCase() || 'OFFLINE'}</div>
+      <div class="kpi-value" style="font-size:22px; ${h.devices?.['smart-meter']?.status === 'isolated' ? 'color:var(--accent-red);' : ''}">${h.devices?.['smart-meter']?.status?.toUpperCase() || 'OFFLINE'}</div>
       <div class="kpi-subtext">Latency: ${h.devices?.['smart-meter']?.latencyMs || 0}ms</div>
     </div>
     <div class="kpi-card">
       <div class="kpi-title">Streetlight Controller (:4003)</div>
-      <div class="kpi-value" style="font-size:22px;">${h.devices?.['streetlight']?.status?.toUpperCase() || 'OFFLINE'}</div>
+      <div class="kpi-value" style="font-size:22px; ${h.devices?.['streetlight']?.status === 'isolated' ? 'color:var(--accent-red);' : ''}">${h.devices?.['streetlight']?.status?.toUpperCase() || 'OFFLINE'}</div>
       <div class="kpi-subtext">Latency: ${h.devices?.['streetlight']?.latencyMs || 0}ms</div>
     </div>
   `;
@@ -506,15 +519,15 @@ async function openIncidentWorkspace(incId) {
     document.getElementById('modal-severity-badge').className = `badge ${inc.severity.toLowerCase()}`;
 
     body.innerHTML = `
-      <div class="panel-header" style="background:var(--color-bg-page); padding:10px; border:1px solid var(--color-border); border-radius:6px; margin-bottom:14px;">
+      <div class="panel-header" style="background:var(--color-bg-page); padding:10px; border:1px solid var(--color-border); border-radius:6px; margin-bottom:14px; flex-wrap:wrap; gap:8px;">
         <div>
           <strong>Status:</strong> <span class="badge ${getStatusBadgeClass(inc.status)}">${inc.status}</span>
           <span style="margin-left: 12px; color: var(--color-text-muted);">Assigned: ${inc.assignedTo}</span>
         </div>
-        <div class="panel-actions" style="display:flex; gap:6px;">
+        <div class="panel-actions" style="display:flex; gap:6px; flex-wrap:wrap;">
           <button class="btn btn-secondary" onclick="updateIncidentStatus('${inc.id}', 'ACKNOWLEDGED')">Acknowledge</button>
           <button class="btn btn-warning" onclick="updateIncidentStatus('${inc.id}', 'INVESTIGATING')">Investigate</button>
-          <button class="btn btn-danger" onclick="updateIncidentStatus('${inc.id}', 'CONTAINED')">Contain</button>
+          <button class="btn btn-danger" onclick="triggerSOARContainment('${inc.id}')">⚡ Isolate Asset (SOAR)</button>
           <button class="btn btn-primary" onclick="updateIncidentStatus('${inc.id}', 'RESOLVED')">Resolve</button>
         </div>
       </div>
@@ -547,7 +560,11 @@ async function openIncidentWorkspace(incId) {
         <pre style="max-height:140px;">${JSON.stringify(inc.evidence?.contextWindow || [], null, 2)}</pre>
       </div>
 
-      <div style="border-top:1px solid var(--color-border); padding-top:14px;">
+      <div style="border-top:1px solid var(--color-border); padding-top:14px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+        <div style="display:flex; gap:8px;">
+          <a href="${DETECTION_ENGINE}/api/incidents/${inc.id}/export/stix" target="_blank"><button class="btn btn-secondary">📥 Export STIX 2.1 (JSON)</button></a>
+          <a href="${DETECTION_ENGINE}/api/incidents/${inc.id}/export/cef" target="_blank"><button class="btn btn-secondary">📥 Export Syslog CEF</button></a>
+        </div>
         <a href="${DETECTION_ENGINE}/alerts/${inc.alertId}/report" target="_blank"><button class="btn btn-primary">Download PDF Incident Report</button></a>
       </div>
     `;
@@ -555,6 +572,48 @@ async function openIncidentWorkspace(incId) {
     modal.classList.remove('hidden');
   } catch (err) {
     alert('Error loading incident details');
+  }
+}
+
+async function triggerSOARContainment(incId) {
+  try {
+    const res = await fetch(`${DETECTION_ENGINE}/api/incidents/${incId}/contain`, { method: 'POST' });
+    const data = await res.json();
+    if (data.success) {
+      alert(`[SOAR ACTION SUCCESS]\n\n${data.message}`);
+      openIncidentWorkspace(incId);
+      refreshAll();
+    } else {
+      alert(`SOAR Action Failed: ${data.error}`);
+    }
+  } catch (err) {
+    alert('Failed to trigger SOAR containment action.');
+  }
+}
+
+async function containAsset(assetId) {
+  try {
+    const res = await fetch(`${DETECTION_ENGINE}/api/assets/${assetId}/contain`, { method: 'POST' });
+    const data = await res.json();
+    if (data.success) {
+      alert(`Asset ${assetId} network interface isolated successfully by SOAR active response.`);
+      refreshAll();
+    }
+  } catch (err) {
+    alert('Failed to isolate asset.');
+  }
+}
+
+async function uncontainAsset(assetId) {
+  try {
+    const res = await fetch(`${DETECTION_ENGINE}/api/assets/${assetId}/uncontain`, { method: 'POST' });
+    const data = await res.json();
+    if (data.success) {
+      alert(`Asset ${assetId} network interface restored to online state.`);
+      refreshAll();
+    }
+  } catch (err) {
+    alert('Failed to restore asset.');
   }
 }
 
@@ -616,5 +675,8 @@ async function runSimulation(scenario) {
 
 window.openIncidentWorkspace = openIncidentWorkspace;
 window.updateIncidentStatus = updateIncidentStatus;
+window.triggerSOARContainment = triggerSOARContainment;
+window.containAsset = containAsset;
+window.uncontainAsset = uncontainAsset;
 window.verifyEvidence = verifyEvidence;
 window.runSimulation = runSimulation;

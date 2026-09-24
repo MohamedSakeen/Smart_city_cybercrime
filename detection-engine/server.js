@@ -342,14 +342,18 @@ async function pollDevice(device, url, evaluator) {
   try {
     const res = await axios.get(`${url}/events`, { timeout: 3000 });
     const events = res.data;
-    
-    deviceHealth[device].status = 'online';
+
+    // Check device status
+    const statusRes = await axios.get(`${url}/status`, { timeout: 3000 }).catch(() => null);
+    const deviceStatus = statusRes?.data?.status || 'online';
+
+    deviceHealth[device].status = deviceStatus;
     deviceHealth[device].lastPoll = new Date().toISOString();
     deviceHealth[device].latencyMs = Date.now() - startTime;
     deviceHealth[device].errors = 0;
 
     if (!events || events.length === 0) return;
-    
+
     // Add to consolidated global event log
     for (const e of events) {
       if (!eventLog.some(existing => existing.id === e.id && existing.device === device)) {
@@ -360,7 +364,7 @@ async function pollDevice(device, url, evaluator) {
 
     const sorted = [...events].sort((a, b) => a.id - b.id);
     evaluator(sorted);
-    
+
     lastSeenIds[device] = sorted[sorted.length - 1].id;
   } catch (err) {
     deviceHealth[device].status = 'offline';
@@ -644,6 +648,292 @@ app.post('/api/simulations/run', async (req, res) => {
   } catch (err) {
     res.status(500).json({ success: false, error: 'Simulation execution error', details: err.message });
   }
+});
+
+// --- STIX 2.1 & Syslog CEF Export Generators ---
+
+function generateStixBundle(incident, evidenceRecord) {
+  const bundleId = `bundle--${crypto.randomUUID()}`;
+  const timestamp = incident.createdAt || new Date().toISOString();
+  const ruleMeta = RULES_METADATA[incident.ruleType] || {};
+  const assetMeta = ASSETS_METADATA[incident.device] || {};
+
+  // 1. Identity SDO (SOC Engine)
+  const identityId = `identity--${crypto.randomUUID()}`;
+  const identitySdo = {
+    type: "identity",
+    spec_version: "2.1",
+    id: identityId,
+    created: timestamp,
+    modified: timestamp,
+    name: "Smart City SOC Automated Detection & SOAR Engine",
+    identity_class: "system",
+    sectors: ["technology", "infrastructure"]
+  };
+
+  // 2. Incident SDO
+  const incidentSdoId = `incident--${crypto.randomUUID()}`;
+  const incidentSdo = {
+    type: "incident",
+    spec_version: "2.1",
+    id: incidentSdoId,
+    created: timestamp,
+    modified: incident.updatedAt || timestamp,
+    name: incident.title || `${incident.ruleType} on ${incident.device}`,
+    description: evidenceRecord?.description || incident.title,
+    severity: (incident.severity || "medium").toLowerCase(),
+    status: incident.status,
+    external_references: [
+      { source_name: "exo-smart-city-soc", external_id: incident.id },
+      { source_name: "evidence-sha256", external_id: incident.evidenceHash }
+    ]
+  };
+
+  if (incident.mitre) {
+    incidentSdo.external_references.push({
+      source_name: "mitre-attack",
+      external_id: incident.mitre.id,
+      url: incident.mitre.url
+    });
+  }
+
+  // 3. Infrastructure SDO (Target Asset)
+  const infraId = `infrastructure--${crypto.randomUUID()}`;
+  const infraSdo = {
+    type: "infrastructure",
+    spec_version: "2.1",
+    id: infraId,
+    created: timestamp,
+    modified: timestamp,
+    name: assetMeta.name || incident.device,
+    infrastructure_types: ["iot-device", "smart-city-asset"],
+    description: `Location: ${assetMeta.location || 'Unknown'}. Vulnerabilities: ${(assetMeta.vulnerabilities || []).join('; ')}`
+  };
+
+  // 4. Indicator SDO
+  const indicatorId = `indicator--${crypto.randomUUID()}`;
+  const pattern = `[file:hashes.'SHA-256' = '${incident.evidenceHash}']`;
+  const indicatorSdo = {
+    type: "indicator",
+    spec_version: "2.1",
+    id: indicatorId,
+    created: timestamp,
+    modified: timestamp,
+    name: `Indicator for ${incident.ruleType}`,
+    description: `Automated rule indicator triggering on ${incident.device}`,
+    pattern: pattern,
+    pattern_type: "stix",
+    valid_from: timestamp,
+    indicator_types: ["malicious-activity"]
+  };
+
+  // 5. Observed Data SCO
+  const observedId = `observed-data--${crypto.randomUUID()}`;
+  const observedDataSdo = {
+    type: "observed-data",
+    spec_version: "2.1",
+    id: observedId,
+    created: timestamp,
+    modified: timestamp,
+    first_observed: evidenceRecord?.triggerEvent?.ts || timestamp,
+    last_observed: timestamp,
+    number_observed: (evidenceRecord?.contextWindow?.length || 0) + 1,
+    objects: {
+      "0": {
+        type: "custom-event-log",
+        device: incident.device,
+        trigger_event: evidenceRecord?.triggerEvent || {}
+      }
+    }
+  };
+
+  // Relationships
+  const rel1 = {
+    type: "relationship",
+    spec_version: "2.1",
+    id: `relationship--${crypto.randomUUID()}`,
+    created: timestamp,
+    modified: timestamp,
+    relationship_type: "targets",
+    source_ref: incidentSdoId,
+    target_ref: infraId
+  };
+
+  const rel2 = {
+    type: "relationship",
+    spec_version: "2.1",
+    id: `relationship--${crypto.randomUUID()}`,
+    created: timestamp,
+    modified: timestamp,
+    relationship_type: "indicates",
+    source_ref: indicatorId,
+    target_ref: incidentSdoId
+  };
+
+  return {
+    type: "bundle",
+    id: bundleId,
+    spec_version: "2.1",
+    objects: [identitySdo, incidentSdo, infraSdo, indicatorSdo, observedDataSdo, rel1, rel2]
+  };
+}
+
+function generateCefPayload(incident, evidenceRecord) {
+  const severityScoreMap = { 'Critical': 10, 'High': 8, 'Medium': 5, 'Low': 2 };
+  const severityScore = severityScoreMap[incident.severity] || 5;
+  const triggerIp = evidenceRecord?.triggerEvent?.detail?.ip || '127.0.0.1';
+  const ts = new Date(incident.createdAt).getTime();
+
+  const extension = [
+    `src=${triggerIp}`,
+    `cs1=${incident.id}`,
+    `cs1Label=IncidentID`,
+    `cs2=${incident.device}`,
+    `cs2Label=TargetAsset`,
+    `cs3=${incident.evidenceHash || 'N/A'}`,
+    `cs3Label=EvidenceSHA256`,
+    `cat=SmartCity/Cybercrime`,
+    `rt=${ts}`,
+    `msg=${(incident.title || '').replace(/\|/g, '\\|')}`
+  ].join(' ');
+
+  return `CEF:0|ExoSmartCity|SOCDetectionEngine|1.0|${incident.ruleType}|${incident.ruleName || incident.ruleType}|${severityScore}|${extension}`;
+}
+
+// --- SOAR Containment & SIEM Export API Endpoints ---
+
+// POST /api/incidents/:id/contain - Trigger Automated SOAR Active Response Isolation
+app.post('/api/incidents/:id/contain', async (req, res) => {
+  const incident = incidents.find(i => i.id === req.params.id || i.alertId === req.params.id);
+  if (!incident) return res.status(404).json({ success: false, error: 'Incident not found' });
+
+  const device = incident.device;
+  const targetUrl = DEVICES[device];
+  if (!targetUrl) return res.status(400).json({ success: false, error: 'Target device URL not found' });
+
+  try {
+    const containRes = await axios.post(`${targetUrl}/api/contain`, { reason: `SOAR Triggered for ${incident.id}` }, { timeout: 3000 });
+    
+    incident.status = 'CONTAINED';
+    incident.notes.push({
+      ts: new Date().toISOString(),
+      author: 'SOC SOAR Engine',
+      text: `[SOAR AUTOMATED RESPONSE] Executed network interface isolation on target asset ${device}. Firewall status: ISOLATED.`
+    });
+    incident.updatedAt = new Date().toISOString();
+
+    if (deviceHealth[device]) {
+      deviceHealth[device].status = 'isolated';
+    }
+
+    res.json({
+      success: true,
+      message: `SOAR Active Response: Asset ${device} successfully isolated.`,
+      incident,
+      deviceResponse: containRes.data
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: 'SOAR Containment dispatch failed', details: err.message });
+  }
+});
+
+// Direct Asset Containment / Uncontainment
+app.post('/api/assets/:id/contain', async (req, res) => {
+  const device = req.params.id;
+  const targetUrl = DEVICES[device];
+  if (!targetUrl) return res.status(404).json({ success: false, error: 'Asset not found' });
+
+  try {
+    const response = await axios.post(`${targetUrl}/api/contain`, {}, { timeout: 3000 });
+    if (deviceHealth[device]) deviceHealth[device].status = 'isolated';
+    res.json({ success: true, data: response.data });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+app.post('/api/assets/:id/uncontain', async (req, res) => {
+  const device = req.params.id;
+  const targetUrl = DEVICES[device];
+  if (!targetUrl) return res.status(404).json({ success: false, error: 'Asset not found' });
+
+  try {
+    const response = await axios.post(`${targetUrl}/api/uncontain`, {}, { timeout: 3000 });
+    if (deviceHealth[device]) deviceHealth[device].status = 'online';
+    res.json({ success: true, data: response.data });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// SIEM Exports: STIX 2.1 & Syslog CEF
+app.get('/api/incidents/:id/export/stix', (req, res) => {
+  const incident = incidents.find(i => i.id === req.params.id || i.alertId === req.params.id);
+  if (!incident) return res.status(404).json({ success: false, error: 'Incident not found' });
+
+  const filepath = path.join(DATA_DIR, `${incident.alertId}.json`);
+  let evidenceData = null;
+  if (fs.existsSync(filepath)) {
+    evidenceData = JSON.parse(fs.readFileSync(filepath, 'utf8'));
+  }
+
+  const stixBundle = generateStixBundle(incident, evidenceData);
+  res.setHeader('Content-Type', 'application/json');
+  res.setHeader('Content-Disposition', `attachment; filename=STIX2.1-${incident.id}.json`);
+  res.json(stixBundle);
+});
+
+app.get('/api/incidents/:id/export/cef', (req, res) => {
+  const incident = incidents.find(i => i.id === req.params.id || i.alertId === req.params.id);
+  if (!incident) return res.status(404).json({ success: false, error: 'Incident not found' });
+
+  const filepath = path.join(DATA_DIR, `${incident.alertId}.json`);
+  let evidenceData = null;
+  if (fs.existsSync(filepath)) {
+    evidenceData = JSON.parse(fs.readFileSync(filepath, 'utf8'));
+  }
+
+  const cefString = generateCefPayload(incident, evidenceData);
+  res.setHeader('Content-Type', 'text/plain');
+  res.setHeader('Content-Disposition', `attachment; filename=Syslog-${incident.id}.cef`);
+  res.send(cefString);
+});
+
+// Backward-compatible export endpoints by alertId
+app.get('/alerts/:id/export/stix', (req, res) => {
+  const incident = incidents.find(i => i.alertId === req.params.id) || {
+    id: `INC-${req.params.id}`,
+    alertId: req.params.id,
+    device: 'traffic-camera',
+    ruleType: 'GENERIC_ALERT',
+    severity: 'Medium',
+    status: 'NEW',
+    createdAt: new Date().toISOString()
+  };
+  const filepath = path.join(DATA_DIR, `${req.params.id}.json`);
+  let evidenceData = null;
+  if (fs.existsSync(filepath)) evidenceData = JSON.parse(fs.readFileSync(filepath, 'utf8'));
+  res.setHeader('Content-Type', 'application/json');
+  res.setHeader('Content-Disposition', `attachment; filename=STIX2.1-${req.params.id}.json`);
+  res.json(generateStixBundle(incident, evidenceData));
+});
+
+app.get('/alerts/:id/export/cef', (req, res) => {
+  const incident = incidents.find(i => i.alertId === req.params.id) || {
+    id: `INC-${req.params.id}`,
+    alertId: req.params.id,
+    device: 'traffic-camera',
+    ruleType: 'GENERIC_ALERT',
+    severity: 'Medium',
+    status: 'NEW',
+    createdAt: new Date().toISOString()
+  };
+  const filepath = path.join(DATA_DIR, `${req.params.id}.json`);
+  let evidenceData = null;
+  if (fs.existsSync(filepath)) evidenceData = JSON.parse(fs.readFileSync(filepath, 'utf8'));
+  res.setHeader('Content-Type', 'text/plain');
+  res.setHeader('Content-Disposition', `attachment; filename=Syslog-${req.params.id}.cef`);
+  res.send(generateCefPayload(incident, evidenceData));
 });
 
 // GET /api/health

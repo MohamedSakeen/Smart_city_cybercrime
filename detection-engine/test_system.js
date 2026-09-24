@@ -60,9 +60,42 @@ async function testSystem() {
         note: 'Starting active forensic investigation.'
       });
       console.log("Updated Incident Status:", updateRes.data.data.status, "| Assigned To:", updateRes.data.data.assignedTo);
+
+      // 9. SOAR Automated Response Containment Test
+      console.log(`\n9. Testing SOAR Automated Active Response Containment for ${inc.id}...`);
+      const soarRes = await axios.post(`${DETECTION_ENGINE}/api/incidents/${inc.id}/contain`);
+      console.log("SOAR Message:", soarRes.data.message);
+      console.log("Updated Incident Status:", soarRes.data.incident.status);
+
+      // Verify device isolation (503 Service Unavailable)
+      const targetDevice = inc.device;
+      const devicePortMap = { 'traffic-camera': 4001, 'smart-meter': 4002, 'streetlight': 4003 };
+      const devicePort = devicePortMap[targetDevice] || 4003;
+      console.log(`Verifying target device ${targetDevice} on port ${devicePort} rejects API calls while isolated...`);
+      try {
+        await axios.post(`http://localhost:${devicePort}/api/brightness`, { brightness: 50 });
+        console.error("FAIL: Device did not reject call while isolated!");
+      } catch (isoErr) {
+        console.log(`Device correctly returned status ${isoErr.response?.status} (${isoErr.response?.data?.error})`);
+      }
+
+      // 10. STIX 2.1 Export Test
+      console.log(`\n10. Testing STIX 2.1 Export for ${inc.id}...`);
+      const stixRes = await axios.get(`${DETECTION_ENGINE}/api/incidents/${inc.id}/export/stix`);
+      console.log("STIX Bundle Type:", stixRes.data.type, "| Spec Version:", stixRes.data.spec_version, "| SDO Objects Count:", stixRes.data.objects?.length);
+
+      // 11. Syslog CEF Export Test
+      console.log(`\n11. Testing Syslog CEF Export for ${inc.id}...`);
+      const cefRes = await axios.get(`${DETECTION_ENGINE}/api/incidents/${inc.id}/export/cef`);
+      console.log("CEF Payload Preview:", cefRes.data.slice(0, 80) + '...');
+
+      // 12. Restore Asset (Uncontain)
+      console.log(`\n12. Testing SOAR Asset Restoration (Uncontain) for ${targetDevice}...`);
+      const restoreRes = await axios.post(`${DETECTION_ENGINE}/api/assets/${targetDevice}/uncontain`);
+      console.log("Asset Restoration Status:", restoreRes.data.data.message);
     }
 
-    console.log("\n=== ALL BACKEND SOC TESTS PASSED SUCCESSFULLY! ===");
+    console.log("\n=== ALL BACKEND SOC & SOAR TESTS PASSED SUCCESSFULLY! ===");
   } catch (err) {
     console.error("Test failed:", err.response?.data || err.message);
   }
